@@ -3,7 +3,7 @@ using System.Collections;
 
 public class RevenControler : MonoBehaviour {
 	float speed = 5.0f;
-	public float jumpHeight = 0.5f;
+	public float jumpHeight = 0.45f;
 	private bool grounded = false;
 	private int jumps = 0;
 	private int maxJumps = 2;

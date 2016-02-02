@@ -3,7 +3,6 @@ using System.Collections;
 
 public class Lighting : MonoBehaviour {
 
-	public TextMesh toast;
 	private Mesh m_Mesh = null;
 	public double theta = 30.0 * System.Math.PI / 180.0;
 	public double Dtheta = 1.0 * System.Math.PI / 180.0;
@@ -100,9 +99,8 @@ public class Lighting : MonoBehaviour {
 
 		if (ravenSeen) {
 			ravenHasBeenSeen();
-			toast.text = "In Light";
 		}else{
-			toast.text = "Not In Light";
+			//todo: may want to do something here
 		}
 
 		m_Mesh.vertices = vertices;
@@ -119,6 +117,8 @@ public class Lighting : MonoBehaviour {
 
 	void ravenHasBeenSeen(){
 		//TODO: whap happens here
+		LevelSignalSender.Instance.signalLightTouched ();
+
 	}
 
 }

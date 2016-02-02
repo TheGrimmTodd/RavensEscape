@@ -49,6 +49,7 @@
      <Compile Include="Assets\Scrips\CameraMovement.cs" />
      <Compile Include="Assets\Scrips\InplutHandlerKeyboard.cs" />
      <Compile Include="Assets\Scrips\KillZonehandler.cs" />
+     <Compile Include="Assets\Scrips\LevelSignalSender.cs" />
      <Compile Include="Assets\Scrips\Lighting.cs" />
      <Compile Include="Assets\Scrips\Panning.cs" />
      <Compile Include="Assets\Scrips\PlayerAnimationHandler.cs" />
