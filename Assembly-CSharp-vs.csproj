@@ -47,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\Scrips\CameraMovement.cs" />
+     <Compile Include="Assets\Scrips\EndZoneBehavior.cs" />
      <Compile Include="Assets\Scrips\InplutHandlerKeyboard.cs" />
      <Compile Include="Assets\Scrips\KillZonehandler.cs" />
      <Compile Include="Assets\Scrips\LevelSignalSender.cs" />
