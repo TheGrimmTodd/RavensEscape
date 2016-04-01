@@ -30,7 +30,7 @@ public class LevelSignalSender  {
 	{
 		lock (syncRoot) 
 		{
-			Application.LoadLevel (0);
+			//Application.LoadLevel (0);
 		}
 	}
 }

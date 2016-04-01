@@ -3,6 +3,10 @@ using System.Collections;
 
 public class Lighting : MonoBehaviour {
 
+	public Animator anim;
+	public Renderer rend;
+	public bool rotateOn = true;
+	public bool lightOn = true;
 	private Mesh m_Mesh = null;
 	public double theta = 30.0 * System.Math.PI / 180.0;
 	public double Dtheta = 1.0 * System.Math.PI / 180.0;
@@ -15,7 +19,8 @@ public class Lighting : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-
+		//anim = GetComponent<Animator> ();
+		rend = GetComponent<Renderer> ();
 		foreground = 1 << LayerMask.NameToLayer ("foreground");
 
 		m_Mesh = new Mesh();
@@ -81,10 +86,12 @@ public class Lighting : MonoBehaviour {
 	}
 	void UpdateMesh()
 	{
-
+				
 		m_Mesh = GetComponent<MeshFilter> ().mesh;
 		Vector3[] vertices = m_Mesh.vertices;
-		swingLight (vertices);
+		if (rotateOn) {
+				swingLight (vertices);
+		}
 		int i;
 		Vector3 direction = copyConstructor(lightBorderL);
 		bool ravenSeen = false;
@@ -112,13 +119,32 @@ public class Lighting : MonoBehaviour {
 
 	void Update ()
 	{
-		UpdateMesh();
+				if (Input.GetKeyDown (KeyCode.F)) {
+						if (rotateOn == false) {
+								rotateOn = true;
+						} else {
+								rotateOn = false;
+						}
+				}
+
+				if (Input.GetKeyDown (KeyCode.E)) {
+						if (rend.enabled == false) {
+								rend.enabled = true;
+						} else {
+								rend.enabled = false;
+						}
+				}
+				UpdateMesh ();
 	}
 
 	void ravenHasBeenSeen(){
 		//TODO: whap happens here
-		LevelSignalSender.Instance.signalLightTouched ();
-
+				if (rend.enabled == true) {
+						LevelSignalSender.Instance.signalLightTouched ();
+						Debug.Log ("Raven Seen");
+						//Need to call die method from PlatformerCharacter2D class ??
+						//PlatformerCharacter2D.die ();
+				}
 	}
 
 }

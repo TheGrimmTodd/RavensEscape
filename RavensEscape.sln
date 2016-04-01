@@ -1,6 +1,8 @@
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2008
 
+Project("{AF7B40D2-7221-2520-543D-841560A448EB}") = "RavensEscape", "Assembly-CSharp-firstpass.csproj", "{EFFB2398-CEC5-19D1-2660-9A2A90AA8B6C}"
+EndProject
 Project("{AF7B40D2-7221-2520-543D-841560A448EB}") = "RavensEscape", "Assembly-CSharp.csproj", "{B0594D4E-2DB7-1A28-9E9C-4817FDCEBE58}"
 EndProject
 Project("{AF7B40D2-7221-2520-543D-841560A448EB}") = "RavensEscape", "Assembly-CSharp-Editor.csproj", "{ABF99E71-859D-EFAB-DE34-EF2BD1DE5BF2}"
@@ -11,6 +13,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EFFB2398-CEC5-19D1-2660-9A2A90AA8B6C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EFFB2398-CEC5-19D1-2660-9A2A90AA8B6C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EFFB2398-CEC5-19D1-2660-9A2A90AA8B6C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EFFB2398-CEC5-19D1-2660-9A2A90AA8B6C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B0594D4E-2DB7-1A28-9E9C-4817FDCEBE58}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B0594D4E-2DB7-1A28-9E9C-4817FDCEBE58}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B0594D4E-2DB7-1A28-9E9C-4817FDCEBE58}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -41,5 +47,4 @@ Global
 		$3.inheritsScope = text/plain
 		$3.scope = text/plain
 	EndGlobalSection
-
 EndGlobal
