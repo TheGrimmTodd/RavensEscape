@@ -10,11 +10,11 @@ public class RayLighting : MonoBehaviour {
 	public float distance;
 	public int lightAngle;
 
-	private float tempDirectionOffset;
-	public float DirectionOffset;
+	private float tempDirection;
+	public float Direction;
 
 	public float RotationSpeed;
-	public float RotationRange;
+	public Vector2 RotationRange;
 
 	private Vector3[] endpoints;
 	private Vector3[] m_Vertices;
@@ -36,7 +36,7 @@ public class RayLighting : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		initializeRayValues ();
-		tempDirectionOffset = DirectionOffset;
+		tempDirection = Direction;
 		tempAccuracy = accuracy;
 		tempLightAngle = lightAngle;
 		tempUp = transform.up;
@@ -47,11 +47,11 @@ public class RayLighting : MonoBehaviour {
 
 	void initializeRayValues()
 	{
-		centerRay = new Ray(transform.position, -transform.up);
+		centerRay = new Ray(transform.position, Quaternion.Euler(0, 0,  -Direction ) * Vector3.up);
+		tempDirection = Direction;
 		int numRays = Mathf.CeilToInt(lightAngle / accuracy);
 		Debug.Log ("NUMRAYS: " + numRays);
 		rays = new Ray[numRays];
-//		endpoints = new Vector3[numRays];
 		float startAngle = -lightAngle / 2;
 		startDirection = Quaternion.AngleAxis (startAngle, Vector3.back) * centerRay.direction;
 
@@ -60,7 +60,6 @@ public class RayLighting : MonoBehaviour {
 		{
 			rays[i] = new Ray(transform.position, curDirection);
 			curDirection = Quaternion.AngleAxis(accuracy, Vector3.back) * curDirection;
-//			Debug.DrawRay (rays[i].origin, rays[i].direction, Color.green);
 		}
 
 		//initialize mesh arrays
@@ -81,53 +80,45 @@ public class RayLighting : MonoBehaviour {
 			}
 		}
 
-//		if (tempUp != transform.up) 
-//		{
-//			OnRotationChange(Quaternion.FromToRotation(tempUp, transform.up));
-//			tempUp = transform.up;
-//
-//		}
-
-		if (tempDirectionOffset != DirectionOffset) 
-		{
-			Quaternion rotation = Quaternion.Euler(0, 0, tempDirectionOffset - DirectionOffset);
-			OnRotationChange (rotation);
-			tempDirectionOffset = DirectionOffset;
-		}
 
 		if (tempPosition != transform.position)
 		{
 			OnPositionChange ();
 		}
-
-//		Debug.DrawRay (centerRay.origin, centerRay.direction, Color.green);
-//		Physics2D.DefaultRaycastLayers = LayerMask.NameToLayer ("foreground");
-
 		UpdateRays();
-//		printRayLog (centerRay, "center");
 	}
 
 	void FixedUpdate()
 	{
-//		Quaternion rotation = Quaternion.Euler(0, 0, RotationSpeed);
-//		OnRotationChange (rotation);
-
-		DirectionOffset += RotationSpeed;
-		if(RotationSpeed > 0){
-			if (DirectionOffset > RotationRange) 
-			{
-				DirectionOffset = RotationRange;
-				RotationSpeed = -RotationSpeed;
-			}
-		} else if(RotationSpeed < 0)
+		SwingLight ();
+		if (tempDirection != Direction) 
 		{
-			if(DirectionOffset < -RotationRange)
+			Quaternion rotation = Quaternion.Euler(0, 0, tempDirection - Direction);
+			OnRotationChange (rotation);
+			tempDirection = Direction;
+		}
+	}
+
+	private void SwingLight()
+	{
+		if (RotationRange.x != RotationRange.y && RotationSpeed != 0) {
+
+			if(RotationSpeed != 0)
 			{
-				DirectionOffset = -RotationRange;
-				RotationSpeed = -RotationSpeed;
+				Direction += RotationSpeed;
+				if (RotationSpeed > 0) {
+					if (Direction > RotationRange.y) {
+						Direction = RotationRange.y;
+						RotationSpeed = -RotationSpeed;
+					}
+				} else if (RotationSpeed < 0) {
+					if (Direction < RotationRange.x) {
+						Direction = RotationRange.x;
+						RotationSpeed = -RotationSpeed;
+					}
+				}
 			}
 		}
-		
 	}
 
 	void UpdateRays(){
@@ -141,23 +132,16 @@ public class RayLighting : MonoBehaviour {
 
 			if(hit.collider != null)
 			{
-//				
-//				printRayLog (rays[i], "index " + i);
 				if(debugLines)
 					Debug.DrawLine(rays[i].origin, hit.point, Color.green);
 
 				endpoint = hit.point;
 				m_Vertices[i+1] = endpoint - transform.position;
-//				Debug.Log("Index: " + i + ", origin: + " +tempRay.origin + ", magnitute: " + tempRay.direction.magnitude + ", direction after: " + tempRay.direction + ", " + hit.distance);
 			}else
 			{
 				Vector3 tempVec = rays[i].direction;
 				tempVec.Set(rays[i].direction.x * distance, rays[i].direction.y * distance, 0);
 				endpoint = rays[i].origin + tempVec;
-				//					if(i == 1)
-				//					{
-//				Debug.Log ("Line: " + rays[i].origin + ", " + tempVec + ", " + endpoint);
-				//					}
 
 				if(debugLines)
 					Debug.DrawLine(rays[i].origin, endpoint, Color.red);
@@ -179,8 +163,6 @@ public class RayLighting : MonoBehaviour {
 		mf.mesh.Clear();
 		mf.mesh.vertices = m_Vertices;
 		mf.mesh.triangles = m_Tris;
-		
-		PrintMeshInfo();
 	}
 
 	void PrintMeshInfo()
@@ -209,13 +191,15 @@ public class RayLighting : MonoBehaviour {
 		{
 			rays[i].origin = transform.position;
 		}
+	}
+
+	void SetLightDirection(float angle)
+	{
 
 	}
 
 	void OnRotationChange(Quaternion rotationDif)
 	{
-		//Update rays
-//		initializeRayValues ();
 		centerRay.direction = rotationDif * centerRay.direction;
 		for (int i = 0; i < rays.Length; i++)
 		{
