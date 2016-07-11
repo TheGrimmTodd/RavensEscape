@@ -4,7 +4,7 @@ using System.Collections;
 public class CameraMovement : MonoBehaviour {
 
 	public const float smoothness = 0.7f;         
-	public GameObject target; 
+	public Rigidbody2D target; 
 	public float closeEnough = 0.05f;
 	public float freeMoveZoneY= 5f;
 
@@ -37,9 +37,9 @@ public class CameraMovement : MonoBehaviour {
 		if (moveX) 
 		{
 
-			float velocity = target.GetComponent<Rigidbody2D> ().velocity.x == 0 
+			float velocity = target.velocity.x == 0 
 					? smoothness 
-					: Mathf.Abs (target.GetComponent<Rigidbody2D> ().velocity.x);
+					: Mathf.Abs (target.velocity.x);
 			Vector3 v = new Vector3 (target.transform.position.x,
 		                        transform.position.y,
 		                        transform.position.z);
@@ -62,9 +62,9 @@ public class CameraMovement : MonoBehaviour {
 		}
 		if (moveY) 
 		{
-			float velocity = target.GetComponent<Rigidbody2D> ().velocity.y == 0 
+			float velocity = target.velocity.y == 0 
 					? smoothness 
-					: target.GetComponent<Rigidbody2D> ().velocity.y;
+					: target.velocity.y;
 			Vector3 v = new Vector3(transform.position.x, 
 			                        target.transform.position.y,
 			                        transform.position.z);
