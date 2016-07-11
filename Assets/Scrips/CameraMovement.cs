@@ -3,25 +3,79 @@ using System.Collections;
 
 public class CameraMovement : MonoBehaviour {
 
-	public float smooth = 0.5f;         
-	private Vector2 pvel;
-	public GameObject player;           
+	public const float smoothness = 0.7f;         
+	public Rigidbody2D target; 
+	public float closeEnough = 0.05f;
+	public float freeMoveZoneY= 5f;
 
-	private Vector3 velocity = Vector3.zero;
-	// Use this for initialization
+	private bool moveY = true;
+	private bool moveX = true;
+	private float lastTimeUpdate;
+	private float deltaTime; 
+
 	void Start () {
-		// Setting up the reference.
-//		player = GameObject.FindGameObjectWithTag("Player").transform;
-//		pvel = ((Rigidbody2D)GameObject.FindGameObjectWithTag ("Player").GetComponent<Rigidbody2D> ()).velocity;
-		pvel = player.GetComponent<Rigidbody2D> ().velocity;
+		lastTimeUpdate = Time.time;
+		deltaTime = Time.deltaTime;
 	}
 
 	void FixedUpdate() {
-		if (player) {
-			var v = transform.position;
-			v.x = player.transform.position.x;
-			float velocity = pvel.x == 0? smooth : pvel.x;
-			transform.position = Vector3.Lerp(transform.position, v, System.Math.Abs(velocity) * Time.deltaTime);
+		deltaTime = Time.time - lastTimeUpdate;
+		lastTimeUpdate = Time.time;
+		if (target) {
+			followTargetX ();
+			followTargetY ();
+		}
+	}
+
+	private void followTargetX ()
+	{
+		float distance = Mathf.Abs (target.transform.position.x - transform.position.x);
+		if (distance > freeMoveZoneY) 
+		{
+			moveX = true;
+		}
+		if (moveX) 
+		{
+
+			float velocity = target.velocity.x == 0 
+					? smoothness 
+					: Mathf.Abs (target.velocity.x);
+			Vector3 v = new Vector3 (target.transform.position.x,
+		                        transform.position.y,
+		                        transform.position.z);
+			transform.position = Vector3.Lerp (transform.position, v, velocity * Time.deltaTime);
+			distance = Mathf.Abs (target.transform.position.x - transform.position.x);
+			if (distance < closeEnough )
+			{
+				moveX = false;
+			}
+		}
+	}
+
+	private void followTargetY ()
+	{
+
+		float distance = Mathf.Abs (target.transform.position.y - transform.position.y);
+		if (distance > freeMoveZoneY) 
+		{
+			moveY = true;
+		}
+		if (moveY) 
+		{
+			float velocity = target.velocity.y == 0 
+					? smoothness 
+					: target.velocity.y;
+			Vector3 v = new Vector3(transform.position.x, 
+			                        target.transform.position.y,
+			                        transform.position.z);
+			transform.position = Vector3.Lerp (transform.position, v, velocity * Time.deltaTime);
+
+			distance = Mathf.Abs (target.transform.position.y - transform.position.y);
+
+			if (distance < closeEnough )
+			{
+				moveY = false;
+			}
 		}
 	}
 }
