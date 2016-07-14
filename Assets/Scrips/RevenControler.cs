@@ -2,8 +2,19 @@
 using System.Collections;
 
 public class RevenControler : MonoBehaviour {
+
+	
+	public static float jumpHeight = 8f;
+
+	private Vector2 FIRST = Vector2.up * jumpHeight;
+	private Vector2 SECOND = Vector2.up * jumpHeight * 0.6f;
+	private Vector2 WALL_RIGHT = new Vector2 (jumpHeight * 3f, jumpHeight * 0.2f);
+	private Vector2 WALL_LEFT = new Vector2 (jumpHeight * -3f, jumpHeight * 0.2f);
+	private Vector2 NONE = Vector2.zero;
+
+	
 	float speed = 5.0f;
-	public static float jumpHeight = 0.45f;
+	public Rigidbody2D _rigidBody;
 	private bool grounded = false;
 	private int jumps = 0;
 	private int maxJumps = 2;
@@ -13,22 +24,7 @@ public class RevenControler : MonoBehaviour {
 	private Transform _transform;
 
 	private int foreground;
-	// Use this for initialization
-	Rigidbody2D _rigidBody;
 
-	sealed class JumpType {
-		public static readonly JumpType FIRST = new JumpType (Vector2.up * jumpHeight);
-		public static readonly JumpType SECOND = new JumpType (Vector2.up * jumpHeight * 0.6f);
-		public static readonly JumpType WALL_RIGHT = new JumpType (new Vector2 (jumpHeight * 0.5f, jumpHeight * 0.5f));
-		public static readonly JumpType WALL_LEFT = new JumpType (new Vector2 (jumpHeight * -0.5f, jumpHeight * 0.5f));
-
-		public readonly Vector2 jumpForce;
-
-		private JumpType(Vector2 force)
-		{
-			jumpForce = force;
-		}
-	}
 
 	public virtual void Awake()
 	{
@@ -36,29 +32,33 @@ public class RevenControler : MonoBehaviour {
 		rightWallCheck = transform.Find ("RightWallCheck");
 		leftWallCheck = transform.Find ("LeftWallCheck");
 		foreground = 1 << LayerMask.NameToLayer ("foreground");
-		_rigidBody = GetComponent<Rigidbody2D>();
 		_transform = this.transform;
 
 	}
-	// Update is called once per frame
-	void Update () {
-		JumpType availableJump = getAvailableJump ();
 
-		jumps = isGrounded () ? 0 : jumps;
-	
+	void Update () {
+
+		Vector2 jumpVector = getJumpVector ();
 		float moveHorizontal = Input.GetAxis ("Horizontal");
 
 		 float y = _rigidBody.velocity.y;
 		_rigidBody.velocity = new Vector2(moveHorizontal * speed, y);
 
-		if(Input.GetKeyDown(KeyCode.Space) && jumps < maxJumps){
-			jumps ++;
-			_rigidBody.AddForce(Vector2.up * jumpHeight,ForceMode2D.Impulse);
+		if (Input.GetKeyDown(KeyCode.Space))
+		{
+
+			print(jumpVector);
+			if ( jumpVector.Equals (FIRST) || jumpVector.Equals (SECOND) )
+			{
+				jumps ++;
+			}
+			_rigidBody.velocity = Vector2.zero;
+			_rigidBody.AddForce( jumpVector , ForceMode2D.Impulse);
 		}
 
 	}
 
-	private bool isGrounded()
+	private bool isGrounded ()
 	{
 		return _rigidBody.velocity.y == 0 && 
 			(Physics2D.Linecast (_transform.position, groundCheck.position, foreground)
@@ -68,7 +68,7 @@ public class RevenControler : MonoBehaviour {
 			                      new Vector2(groundCheck.position.x + .16f,groundCheck.position.y), foreground));
 	}
 
-	private bool isOnRightWall()
+	private bool isOnRightWall ()
 	{
 		return _rigidBody.velocity.x == 0 && 
 			(Physics2D.Linecast (_transform.position, rightWallCheck.position, foreground)
@@ -78,7 +78,7 @@ public class RevenControler : MonoBehaviour {
 			                      new Vector2(rightWallCheck.position.x + .16f,rightWallCheck.position.y), foreground));
 	}
 
-	private bool isOnLeftWall()
+	private bool isOnLeftWall ()
 	{
 		return _rigidBody.velocity.x == 0 && 
 			(Physics2D.Linecast (_transform.position, leftWallCheck.position, foreground)
@@ -88,9 +88,33 @@ public class RevenControler : MonoBehaviour {
 			                      new Vector2(leftWallCheck.position.x + .16f,leftWallCheck.position.y), foreground));
 	}
 
-	private JumpType getAvailableJump()
+	private Vector2 getJumpVector ()
 	{
-		return JumpType.FIRST;
+		if (isGrounded ()) 
+		{
+			jumps = 0;
+			return FIRST;
+		} 
+		else if (isOnRightWall ()) 
+		{
+			print("WALL_LEFT" + WALL_RIGHT);
+			return WALL_LEFT;
+		} 
+		else if (isOnLeftWall ()) 
+		{
+			print("WALL_RIGHT" + WALL_LEFT);
+			return WALL_RIGHT;
+		} 
+		else if (jumps < maxJumps) 
+		{
+			print("SECOND" + SECOND);
+			return SECOND;
+		} 
+		else 
+		{
+			print("NONE" + NONE);
+			return NONE;
+		}
 	}
 
 
