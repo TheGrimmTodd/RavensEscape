@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Panning : MonoBehaviour {
+public class Panning : MonoBehaviour , RavenController.RavenTouchedListener {
 
 	public float dis = 10.0f;
 	public float velocity = 1.5f;
@@ -9,6 +9,7 @@ public class Panning : MonoBehaviour {
 	private Transform _transform;
 	private Vector3 origional;
 	private Vector3 destination;
+	private Vector2 vel;
 
 	// Use this for initialization
 	void Start () {
@@ -16,6 +17,7 @@ public class Panning : MonoBehaviour {
 		origional = copyConstructor (_transform.position);
 		destination = new Vector3( origional.x + dis, origional.y,origional.z);
 
+		vel = GetComponent<Rigidbody2D>().velocity;
 	}
 	Vector3 copyConstructor(Vector3 toCopy){
 		Vector3 copy = new Vector3 ();
@@ -27,10 +29,6 @@ public class Panning : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-
-
-//		_transform.position = Vector3.(_transform.position, destination, velocity * Time.deltaTime);
-		Vector2 vel = GetComponent<Rigidbody2D>().velocity;
 		vel.x = velocity * (!dir ? -1f : 1f);
 		GetComponent<Rigidbody2D> ().velocity = vel;
 
@@ -44,4 +42,21 @@ public class Panning : MonoBehaviour {
 		}
 
 	}
+
+	public void OnRavenTouchedLeft(RavenController raven){
+
+	}
+	public void OnRavenTouchedRight(RavenController raven){
+		
+	}
+	public void OnRavenTouchedTop(RavenController raven){
+		
+	}
+	public void OnRavenTouchedBottom(RavenController raven){
+		raven.AddExternalVelocity (vel);
+	}
+	public void OnRavenLeaving(RavenController raven){
+		raven.AddExternalVelocity (Vector2.zero);
+	}
+	
 }
