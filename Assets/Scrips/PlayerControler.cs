@@ -3,18 +3,13 @@ using System.Collections.Generic;
 
 public class PlayerControler : MonoBehaviour {
 
-
-
-
 	private PlayerAnimationHandler animationHandler;
 	private InplutHandlerKeyboard inputHandler;
 	private ScreanInput screeninput;
 	private PlayerValues values;
 
-
 	protected Transform _transform;
 	protected Rigidbody2D _rigidbody;
-
 
 	// raycast stuff
 	private RaycastHit2D hit;
@@ -29,7 +24,6 @@ public class PlayerControler : MonoBehaviour {
 		_transform = transform;
 		_rigidbody = GetComponent<Rigidbody2D>();
 		values = new PlayerValues ();
-
 	}
 
 
@@ -76,13 +70,10 @@ public class PlayerControler : MonoBehaviour {
 
 		// actually move the player
 		_rigidbody.velocity = new Vector2(physVel.x, _rigidbody.velocity.y*increasedFall);
-
-
 	}
 
 
 	/***LOGIC METHODS ***/
-
 	private float getMoveVel(PlayerValues.inputState currentInputState){
 
 		switch (currentInputState) {

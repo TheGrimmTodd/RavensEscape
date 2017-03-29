@@ -3,12 +3,7 @@ using System.Collections;
 
 public class DragObjecController : MonoBehaviour {
 	bool move;
-	// Use this for initialization
-	void Start () {
-	
-	}
-	
-	// Update is called once per frame
+
 	public void Move () {
 
 		if (Input.GetMouseButtonDown (0))

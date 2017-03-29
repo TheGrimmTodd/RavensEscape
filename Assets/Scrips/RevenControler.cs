@@ -40,13 +40,9 @@ public class RevenControler : MonoBehaviour {
 
 	private bool checkGrounded()
 	{
-
 		return _rigidBody.velocity.y == 0 && 
 			(Physics2D.Linecast (_transform.position, groundCheck.position, foreground)
 			||Physics2D.Linecast (new Vector2(_transform.position.x - 0.16f,_transform.position.y), new Vector2(groundCheck.position.x - .16f,groundCheck.position.y), foreground)
 				||Physics2D.Linecast (new Vector2(_transform.position.x + 0.16f,_transform.position.y), new Vector2(groundCheck.position.x + .16f,groundCheck.position.y),foreground));
 	}
-
-
-
 }
