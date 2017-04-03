@@ -3,9 +3,8 @@ using System.Collections;
 
 public class PlayerController : RaycastController
 {
-    public float maxSlope = 80;
-
     public CollisionInfo collisions;
+
     [HideInInspector]
     public Vector2 playerInput;
 
@@ -31,12 +30,6 @@ public class PlayerController : RaycastController
         {
             collisions.faceDir = (int) Mathf.Sign(moveAmount.x);
         }
-
-        if (moveAmount.y < 0)
-        {
-            DescendSlope(ref moveAmount);
-        }
-
         HorizontalCollisions(ref moveAmount);
 
         if (moveAmount.y != 0)
@@ -54,7 +47,7 @@ public class PlayerController : RaycastController
 
     void HorizontalCollisions(ref Vector2 moveAmount)
     {
-        float directionX =collisions.faceDir;
+        float directionX = collisions.faceDir;
         float rayLength = Mathf.Abs(moveAmount.x) + skinWidth;
 
         if(Mathf.Abs(moveAmount.x) < skinWidth)
@@ -76,38 +69,11 @@ public class PlayerController : RaycastController
                 {
                     continue;
                 }
-                float slopeAngle = Vector2.Angle(hit.normal, Vector2.up);
+                moveAmount.x = (hit.distance - skinWidth) * directionX;
+                rayLength = hit.distance;
 
-                if (i == 0 && slopeAngle <= maxSlope)
-                {
-                    if (collisions.descendingSlope)
-                    {
-                        collisions.descendingSlope = false;
-                        moveAmount = collisions.moveAmountOld;
-                    }
-                    float distanceToSlopeStart = 0;
-                    if (slopeAngle != collisions.slopeAngleOld)
-                    {
-                        distanceToSlopeStart = hit.distance - skinWidth;
-                        moveAmount.x -= distanceToSlopeStart * directionX;
-                    }
-                    ClimbSlope(ref moveAmount, slopeAngle);
-                    moveAmount.x += distanceToSlopeStart * directionX;
-                }
-
-                if (!collisions.climbingSlope || slopeAngle > maxSlope)
-                {
-                    moveAmount.x = (hit.distance - skinWidth) * directionX;
-                    rayLength = hit.distance;
-
-                    if (collisions.climbingSlope)
-                    {
-                        moveAmount.y = Mathf.Tan(collisions.slopeAngle * Mathf.Deg2Rad) * Mathf.Abs(moveAmount.x);
-                    }
-
-                    collisions.left = directionX == -1;
-                    collisions.right = directionX == 1;
-                }
+                collisions.left = directionX == -1;
+                collisions.right = directionX == 1;
             }
         }
     }
@@ -127,149 +93,26 @@ public class PlayerController : RaycastController
 
             if (hit)
             {
-                if(hit.collider.tag == "verticalThrough")
-                {
-                    if(directionY == 1 || hit.distance == 0)
-                    {
-                        continue;
-                    }
-                    if (collisions.fallingThroughPlat)
-                    {
-                        continue;
-                    }
-                    if(playerInput.y == -1)
-                    {
-                        collisions.fallingThroughPlat = true;
-                        Invoke("ResetFallingThroughPlat", .5f);
-                        continue;
-                    }
-                }
                 moveAmount.y = (hit.distance - skinWidth) * directionY;
                 rayLength = hit.distance;
-
-                if (collisions.climbingSlope)
-                {
-                    moveAmount.x = moveAmount.y / Mathf.Tan(collisions.slopeAngle * Mathf.Deg2Rad) * Mathf.Sign(moveAmount.x);
-                }
 
                 collisions.below = directionY == -1;
                 collisions.above = directionY == 1;
             }
         }
-
-        if (collisions.climbingSlope)
-        {
-            float directionX = Mathf.Sign(moveAmount.x);
-            rayLength = Mathf.Abs(moveAmount.x) + skinWidth;
-            Vector2 rayOrigin = ((directionX == -1) ? raycastOrigins.bottomLeft : raycastOrigins.bottomRight) + Vector2.up * moveAmount.y;
-            RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.right * directionX, rayLength, collisionMask);
-
-            if (hit)
-            {
-                float slopeAngle = Vector2.Angle(hit.normal, Vector2.up);
-                if (slopeAngle != collisions.slopeAngle)
-                {
-                    moveAmount.x = (hit.distance - skinWidth) * directionX;
-                    collisions.slopeAngle = slopeAngle;
-                }
-            }
-        }
-    }
-
-    void ClimbSlope(ref Vector2 moveAmount, float slopeAngle)
-    {
-        float moveDistance = Mathf.Abs(moveAmount.x);
-        float climbmoveAmountY = Mathf.Sin(slopeAngle * Mathf.Deg2Rad) * moveDistance;
-
-        if (moveAmount.y <= climbmoveAmountY)
-        {
-            moveAmount.y = climbmoveAmountY;
-            moveAmount.x = Mathf.Cos(slopeAngle * Mathf.Deg2Rad) * moveDistance * Mathf.Sign(moveAmount.x);
-            collisions.below = true;
-            collisions.climbingSlope = true;
-            collisions.slopeAngle = slopeAngle;
-        }
-    }
-
-    void DescendSlope(ref Vector2 moveAmount)
-    {
-        RaycastHit2D maxSlopeHitLeft = Physics2D.Raycast(raycastOrigins.bottomLeft, Vector2.down, Mathf.Abs(moveAmount.y) + skinWidth, collisionMask);
-        RaycastHit2D maxSlopeHitRight = Physics2D.Raycast(raycastOrigins.bottomRight, Vector2.down, Mathf.Abs(moveAmount.y) + skinWidth, collisionMask);
-        SlideDownSlope(maxSlopeHitLeft, ref moveAmount);
-        SlideDownSlope(maxSlopeHitRight, ref moveAmount);
-
-        if (!collisions.slidingDownSlope)
-        {
-            float directionX = Mathf.Sign(moveAmount.x);
-            Vector2 rayOrigin = (directionX == -1) ? raycastOrigins.bottomRight : raycastOrigins.bottomLeft;
-            RaycastHit2D hit = Physics2D.Raycast(rayOrigin, -Vector2.up, Mathf.Infinity, collisionMask);
-
-            if (hit)
-            {
-                float slopeAngle = Vector2.Angle(hit.normal, Vector2.up);
-                if (slopeAngle != 0 && slopeAngle <= maxSlope)
-                {
-                    if (Mathf.Sign(hit.normal.x) == directionX)
-                    {
-                        if (hit.distance - skinWidth <= Mathf.Tan(slopeAngle * Mathf.Deg2Rad) * Mathf.Abs(moveAmount.x))
-                        {
-                            float moveDistance = Mathf.Abs(moveAmount.x);
-                            float descendmoveAmountY = Mathf.Sin(slopeAngle * Mathf.Deg2Rad) * moveDistance;
-                            moveAmount.x = Mathf.Cos(slopeAngle * Mathf.Deg2Rad) * moveDistance * Mathf.Sign(moveAmount.x);
-                            moveAmount.y -= descendmoveAmountY;
-
-                            collisions.slopeAngle = slopeAngle;
-                            collisions.descendingSlope = true;
-                            collisions.below = true;
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    void SlideDownSlope(RaycastHit2D hit, ref Vector2 moveAmount)
-    {
-        if (hit)
-        {
-            float slopeAngle = Vector2.Angle(hit.normal, Vector2.up);
-            if(slopeAngle > maxSlope)
-            {
-                moveAmount.x = hit.normal.x * (Mathf.Abs(moveAmount.y) - hit.distance) / Mathf.Tan(slopeAngle * Mathf.Deg2Rad);
-
-                collisions.slopeAngle = slopeAngle;
-                collisions.slidingDownSlope = true;
-            }
-        }
-    }
-
-    void ResetFallingThroughPlat()
-    {
-        collisions.fallingThroughPlat = false;
     }
 
     public struct CollisionInfo
     {
         public bool above, below;
         public bool left, right;
-
-        public bool climbingSlope;
-        public bool descendingSlope;
-        public bool slidingDownSlope;
-        public float slopeAngle, slopeAngleOld;
         public Vector2 moveAmountOld;
         public int faceDir;
-        public bool fallingThroughPlat;
 
         public void Reset()
         {
             above = below = false;
             left = right = false;
-            climbingSlope = false;
-            descendingSlope = false;
-
-            slopeAngleOld = slopeAngle;
-            slopeAngle = 0;
         }
     }
 }

@@ -3,17 +3,17 @@ using System.Collections;
 [RequireComponent(typeof(BoxCollider2D))]
 public class RaycastController : MonoBehaviour
 {
-    public const float skinWidth = .015f;
     const float distBetweenRays = .25f;
+    public const float skinWidth = .015f;
+
     public LayerMask collisionMask;
-    [HideInInspector]
-    public int horizontalRayCount;
-    [HideInInspector]
-    public int verticalRayCount;
     public BoxCollider2D collider;
     public RaycastOrigins raycastOrigins;
 
     [HideInInspector]
+    public int horizontalRayCount;
+    [HideInInspector]
+    public int verticalRayCount;[HideInInspector]
     public float horizontalRaySpacing;
     [HideInInspector]
     public float verticalRaySpacing;
@@ -50,7 +50,6 @@ public class RaycastController : MonoBehaviour
 
         horizontalRayCount = Mathf.RoundToInt(boundsHight / distBetweenRays);
         verticalRayCount = Mathf.RoundToInt(boundsWidth / distBetweenRays);
-
 
         horizontalRaySpacing = bounds.size.y / (horizontalRayCount - 1);
         verticalRaySpacing = bounds.size.x / (verticalRayCount - 1);

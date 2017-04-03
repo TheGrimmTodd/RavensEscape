@@ -6,7 +6,6 @@ public class PlatformController : RaycastController {
 
     public LayerMask passengerMask;
     public Vector3 move;
-
     public Vector3[] localWayPoints;
     public bool cyclic;
     public float speed;
@@ -15,7 +14,6 @@ public class PlatformController : RaycastController {
     public float easeAmount;
 
     Vector3[] globalWayPoints;
-
 
     int fromWayPointIndex;
     float percentAwayFrom = 0;
