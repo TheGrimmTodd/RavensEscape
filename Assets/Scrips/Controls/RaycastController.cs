@@ -13,11 +13,12 @@ public class RaycastController : MonoBehaviour
     [HideInInspector]
     public int horizontalRayCount;
     [HideInInspector]
-    public int verticalRayCount;[HideInInspector]
+    public int verticalRayCount;
+    [HideInInspector]
     public float horizontalRaySpacing;
     [HideInInspector]
     public float verticalRaySpacing;
-    [HideInInspector]
+   
 
     public virtual void Awake()
     {

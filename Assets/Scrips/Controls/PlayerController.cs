@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
 
 public class PlayerController : RaycastController
 {
@@ -114,5 +115,10 @@ public class PlayerController : RaycastController
             above = below = false;
             left = right = false;
         }
+    }
+
+    public void SeenByLight()
+    {
+        transform.position = Vector3.zero + Vector3.forward * -10; 
     }
 }
