@@ -4,6 +4,7 @@ using System.Collections;
 public class RayLighting : MonoBehaviour {
 
 	public DragObjecController dragController;
+    public LayerMask playerMask;
 
 	private Ray centerRay;
 	public float accuracy;
@@ -80,7 +81,6 @@ public class RayLighting : MonoBehaviour {
 			}
 		}
 
-
 		if (tempPosition != transform.position)
 		{
 			OnPositionChange ();
@@ -128,13 +128,17 @@ public class RayLighting : MonoBehaviour {
 		for(int i = 0; i < rays.Length; i++)
 		{
 			RaycastHit2D hit = Physics2D.Raycast (rays[i].origin, rays[i].direction, distance);
-
-
-			if(hit.collider != null)
+			RaycastHit2D playerHit = Physics2D.Raycast (rays[i].origin, rays[i].direction, distance, playerMask);
+            if (playerHit && (!hit || hit.distance >= playerHit.distance))
+            {
+                PlayerController controller = playerHit.collider.transform.GetComponent<PlayerController>();
+                controller.SeenByLight();
+            }
+            if (hit.collider != null)
 			{
 				if(debugLines)
 					Debug.DrawLine(rays[i].origin, hit.point, Color.green);
-
+                
 				endpoint = hit.point;
 				m_Vertices[i+1] = endpoint - transform.position;
 			}else

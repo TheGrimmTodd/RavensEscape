@@ -8,11 +8,8 @@ public class CameraMovement : MonoBehaviour {
 	public GameObject player;           
 
 	private Vector3 velocity = Vector3.zero;
-	// Use this for initialization
+	
 	void Start () {
-		// Setting up the reference.
-//		player = GameObject.FindGameObjectWithTag("Player").transform;
-//		pvel = ((Rigidbody2D)GameObject.FindGameObjectWithTag ("Player").GetComponent<Rigidbody2D> ()).velocity;
 		pvel = player.GetComponent<Rigidbody2D> ().velocity;
 	}
 
