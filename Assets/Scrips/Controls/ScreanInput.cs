@@ -20,11 +20,10 @@ public class ScreanInput {
 	private Touch Left;
 	bool initLeft = false;
 	bool initRight = false;
-	private PlayerValues.inputState attack = PlayerValues.inputState.None;
+	
 	int r = 0;
 	int l = 0;
 
-	public PlayerValues playerVal;
 	private Vector2 LeftStart;
 	private Vector2 RightStart;
 
@@ -33,7 +32,6 @@ public class ScreanInput {
 
 	public void updateInput()
 	{
-		attack = PlayerValues.inputState.None;
 		middle =  Screen.currentResolution.width/2;
 
 		r = 0; l = 0;
@@ -69,14 +67,12 @@ public class ScreanInput {
 							   swipeDist > minSwipeDist &&
 							   swipeDist < maxSwipeDist)
 							{
-								playerVal.setJumps(PlayerValues.inputState.Jump);
-								attack = PlayerValues.inputState.None;
+								//swipe
 								
 							}
 							else
 							{
-								attack = PlayerValues.inputState.HitMain;
-								playerVal.setJumps(PlayerValues.inputState.None);
+								//tap
 							}
 						}
 					
@@ -124,31 +120,25 @@ public class ScreanInput {
 
 							if(ldeltx < -nullarea)
 							{
-								playerVal.setDirectionalX(PlayerValues.inputState.WalkLeft);
-								playerVal.setFacing(PlayerValues.facing.Left);
+								// left
 							}
 							else if(ldeltx > nullarea)
 							{
-								playerVal.setFacing(PlayerValues.facing.Right);
-								playerVal.setDirectionalX(PlayerValues.inputState.WalkRight);						
+								// right						
 							}
 							
 							if(ldelty > nullarea )
 							{
-
-								playerVal.setDirectionalY(PlayerValues.inputState.Float);
+								// up
 							}
 							else if(ldelty < -nullarea )
 							{
-
-								playerVal.setDirectionalY(PlayerValues.inputState.Fall);
+								//down
 							}
-
 						}
 						else 
 						{	
-							playerVal.setDirectionalX (PlayerValues.inputState.None);
-							playerVal.setDirectionalY (PlayerValues.inputState.None);
+							//nothing
 
 						}
 					}
@@ -171,43 +161,20 @@ public class ScreanInput {
 				{
 					endRight();
 				}
-			
-
 			}
-
 		}
 		if (l == 0 || !initLeft) endLeft ();
 		if (r == 0 || !initRight) endRight ();
-		playerVal.setAttack(attack);
-
-//		gui.text = touchinfo;
 	}
 
 	private void endRight()
 	{
 		initRight = false;
-		playerVal.setJumps (PlayerValues.inputState.None);
-		playerVal.setAttack (PlayerValues.inputState.None);
+		
 	}
 	private void endLeft()
 	{
 		initLeft = false;
-		playerVal.setDirectionalX (PlayerValues.inputState.None);
-		playerVal.setDirectionalY (PlayerValues.inputState.None);
-	}
-
-
-
-	public ScreanInput(PlayerValues val, GUIText GUI)
-	{
-		playerVal = val;
-		this.gui = GUI;
-	}
-
-	public ScreanInput(PlayerValues val)
-	{
-		playerVal = val;
-
 	}
 
 	private void calculateSwipeVals( float swipeDist,float swipeTime)
