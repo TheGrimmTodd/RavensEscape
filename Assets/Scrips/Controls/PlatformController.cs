@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class PlatformController : RaycastController {
 
-    public LayerMask passengerMask;
     public Vector3 move;
     public Vector3[] localWayPoints;
     public bool cyclic;
@@ -42,7 +41,6 @@ public class PlatformController : RaycastController {
         MovePassengers(true);
         transform.Translate(velocity);
         MovePassengers(false);
-        	
 	}
 
     float Ease( float x)
@@ -79,11 +77,9 @@ public class PlatformController : RaycastController {
                     fromWayPointIndex = 0;
                     System.Array.Reverse(globalWayPoints);
                 }
-
             }
             nextMoveTime = Time.time + waitTime;
         }
-
         return newPos - transform.position;
     }
     
@@ -119,7 +115,7 @@ public class PlatformController : RaycastController {
             {
                 Vector2 rayOrigin = (directionY == -1) ? raycastOrigins.bottomLeft : raycastOrigins.topLeft;
                 rayOrigin += Vector2.right * (verticalRaySpacing * i);
-                RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.up * directionY, rayLength, passengerMask);
+                RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.up * directionY, rayLength, collisionMask);
                 Debug.DrawRay(rayOrigin, Vector2.up * directionY, Color.red);
                 if (hit && hit.distance != 0)
                 {
@@ -143,7 +139,7 @@ public class PlatformController : RaycastController {
             {
                 Vector2 rayOrigin = (directionX == -1) ? raycastOrigins.bottomLeft : raycastOrigins.bottomRight;
                 rayOrigin += Vector2.up * (horizontalRaySpacing * i);
-                RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.right * directionX, rayLength, passengerMask);
+                RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.right * directionX, rayLength, collisionMask);
                 Debug.DrawRay(rayOrigin, Vector2.up * directionY, Color.red);
                 if (hit && hit.distance != 0)
                 {
@@ -166,7 +162,7 @@ public class PlatformController : RaycastController {
             for (int i = 0; i < verticalRayCount; i++)
             {
                 Vector2 rayOrigin = raycastOrigins.topLeft + Vector2.right * (verticalRaySpacing * i);
-                RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.up, rayLength, passengerMask);
+                RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.up, rayLength, collisionMask);
                 Debug.DrawRay(rayOrigin, Vector2.up * directionY, Color.red);
                 if (hit && hit.distance != 0)
                 {
