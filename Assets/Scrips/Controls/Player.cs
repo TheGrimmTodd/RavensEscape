@@ -19,7 +19,7 @@ public class Player : MonoBehaviour {
     public float wallSlideSpeedMax = 3;
     public float wallStickTime = .25f;
 
-    Vector3 velocity;
+    internal Vector3 velocity;
     float gravity;
     float maxJumpVelocity;
     float minJumpVelocity;
@@ -50,7 +50,7 @@ public class Player : MonoBehaviour {
         }
         else
         {
-            spawner.SpawnPlayer();
+            spawner.SpawnPlayer(this);
         }
 
         if (controller.collisions.above || controller.collisions.below)
