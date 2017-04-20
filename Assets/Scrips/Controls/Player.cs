@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent (typeof (PlayerController))]
+[RequireComponent(typeof(Spawn))]
 public class Player : MonoBehaviour {
 
     float moveSpeed = 6;
@@ -29,9 +30,11 @@ public class Player : MonoBehaviour {
     float wallDirX;
 
     PlayerController controller;
+    Spawn spawner;
 
 	void Start () {
         controller = GetComponent <PlayerController>();
+        spawner = GetComponent <Spawn>();
         gravity = -(2 * maxJumpHeight) / Mathf.Pow(timeToJumpApex, 2);
         maxJumpVelocity = Mathf.Abs(gravity) * timeToJumpApex;
         minJumpVelocity = Mathf.Sqrt(2 * Mathf.Abs(gravity) * minJumpHeight);
@@ -41,8 +44,14 @@ public class Player : MonoBehaviour {
     {
         CalculateVelocity();
         HandleWallSliding();
-
-        controller.Move(velocity * Time.deltaTime, directionInput);
+        if (spawner.IsSpawned())
+        {
+            controller.Move(velocity * Time.deltaTime, directionInput);
+        }
+        else
+        {
+            spawner.SpawnPlayer();
+        }
 
         if (controller.collisions.above || controller.collisions.below)
         {

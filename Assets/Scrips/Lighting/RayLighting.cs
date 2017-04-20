@@ -51,7 +51,7 @@ public class RayLighting : MonoBehaviour {
 		centerRay = new Ray(transform.position, Quaternion.Euler(0, 0,  -Direction ) * Vector3.up);
 		tempDirection = Direction;
 		int numRays = Mathf.CeilToInt(lightAngle / accuracy);
-		Debug.Log ("NUMRAYS: " + numRays);
+
 		rays = new Ray[numRays];
 		float startAngle = -lightAngle / 2;
 		startDirection = Quaternion.AngleAxis (startAngle, Vector3.back) * centerRay.direction;
@@ -131,8 +131,8 @@ public class RayLighting : MonoBehaviour {
 			RaycastHit2D playerHit = Physics2D.Raycast (rays[i].origin, rays[i].direction, distance, playerMask);
             if (playerHit && (!hit || hit.distance >= playerHit.distance))
             {
-                PlayerController controller = playerHit.collider.transform.GetComponent<PlayerController>();
-                controller.SeenByLight();
+                Spawn spawner = playerHit.collider.transform.GetComponent<Spawn>();
+                spawner.SpawnPlayer();
             }
             if (hit.collider != null)
 			{
