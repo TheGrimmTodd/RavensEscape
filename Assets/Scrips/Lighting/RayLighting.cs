@@ -6,35 +6,35 @@ public class RayLighting : MonoBehaviour {
 	public DragObjecController dragController;
     public LayerMask playerMask;
 
-	private Ray centerRay;
-	public float accuracy;
-	public float distance;
-	public int lightAngle;
+    public float accuracy;
+    [Range(0, 360)]
+    public float Direction = 180;
+    [Range(5, 165)]
+    public int lightAngle = 45;
+    [Range(4, 20)]
+    public float distance = 10;
+    [Range(0, 5)]
+    public float RotationSpeed = 0;
+    [Range(0, 360)]
+    public float rotationRangeRight = 135;
+    [Range(0, 360)]
+    public float rotationRangeLeft = 225;
+    public bool debugLogs;
+    public bool debugLines;
 
-	private float tempDirection;
-	public float Direction;
-
-	public float RotationSpeed;
-	public Vector2 RotationRange;
-
-	private Vector3[] endpoints;
+    private Vector3[] endpoints;
 	private Vector3[] m_Vertices;
 	private int[] m_Tris;
-
-	public bool debugLogs;
-	public bool debugLines;
-
-	private float tempAccuracy;
+    private Ray centerRay;
+    private float tempDirection;
+    private float tempAccuracy;
 	private int tempLightAngle;
 	private Vector3 tempUp;
 	private Vector3 tempPosition;
-
 	private MeshFilter mf;
-
 	private Ray[] rays;
 	Vector3 startDirection;
 
-	// Use this for initialization
 	void Start () {
 		initializeRayValues ();
 		tempDirection = Direction;
@@ -68,7 +68,6 @@ public class RayLighting : MonoBehaviour {
 		m_Tris = new int[3 * (rays.Length - 1)];
 	}
 	
-	// Update is called once per frame
 	void Update () {
 		dragController.Move ();
 		if (tempAccuracy != accuracy || tempLightAngle != lightAngle) 
@@ -101,19 +100,19 @@ public class RayLighting : MonoBehaviour {
 
 	private void SwingLight()
 	{
-		if (RotationRange.x != RotationRange.y && RotationSpeed != 0) {
+		if (rotationRangeRight != rotationRangeLeft && RotationSpeed != 0) {
 
 			if(RotationSpeed != 0)
 			{
 				Direction += RotationSpeed;
 				if (RotationSpeed > 0) {
-					if (Direction > RotationRange.y) {
-						Direction = RotationRange.y;
+					if (Direction > rotationRangeLeft) {
+						Direction = rotationRangeLeft;
 						RotationSpeed = -RotationSpeed;
 					}
 				} else if (RotationSpeed < 0) {
-					if (Direction < RotationRange.x) {
-						Direction = RotationRange.x;
+					if (Direction < rotationRangeRight) {
+						Direction = rotationRangeRight;
 						RotationSpeed = -RotationSpeed;
 					}
 				}
@@ -214,4 +213,28 @@ public class RayLighting : MonoBehaviour {
 	void printRayLog(Ray ray, Vector3 endpoint, string title){
 		Debug.Log (title + " Ray, origin: " + ray.origin + ", endpoint: " + endpoint.x + ", " + endpoint.y + ", " + endpoint.z);
 	}
+
+    void OnDrawGizmos()
+    {
+        float startAngle = -lightAngle / 2;
+        Vector3 center = Quaternion.Euler(0, 0, -Direction) * new Vector3(0f, distance) + transform.position;
+        Vector3 right = Quaternion.Euler(0, 0, -Direction + startAngle) * new Vector3(0f, distance) + transform.position;
+        Vector3 left = Quaternion.Euler(0, 0, -Direction - startAngle) * new Vector3(0f, distance) + transform.position;
+        Vector3 rightRange = Quaternion.Euler(0, 0, -rotationRangeRight - startAngle) * new Vector3(0f, distance) + transform.position;
+        Vector3 leftRange = Quaternion.Euler(0, 0, -rotationRangeLeft + startAngle) * new Vector3(0f, distance) + transform.position;
+
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawLine(transform.position, center);
+        Gizmos.color = Color.green;
+        Gizmos.DrawLine(transform.position, right);
+        Gizmos.DrawLine(transform.position, left);
+        Gizmos.color = ValidRange() ? Color.blue : Color.red;
+        Gizmos.DrawLine(transform.position, rightRange);
+        Gizmos.DrawLine(transform.position, leftRange);
+    }
+    private bool ValidRange()
+    {
+        return !(rotationRangeRight > rotationRangeLeft)
+            && !(Direction > rotationRangeLeft || Direction < rotationRangeRight);
+    }
 }
