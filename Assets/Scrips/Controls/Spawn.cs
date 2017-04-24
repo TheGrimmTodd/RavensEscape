@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -11,16 +12,6 @@ public class Spawn : MonoBehaviour {
     private bool isSpawned = false;
     private bool isSpawning = false;
     private float spawnStartTime;
-
-    public void SpawnPlayer()
-    {
-        if (!isSpawning)
-        {
-            transform.position = spawnLocation;
-            isSpawning = true;
-            spawnStartTime = Time.time;
-        }
-    }
 
     public void PlayerSeen()
     {
@@ -61,5 +52,16 @@ public class Spawn : MonoBehaviour {
         
         Gizmos.DrawLine(spawnLocation - Vector3.up * size, spawnLocation + Vector3.up * size);
         Gizmos.DrawLine(spawnLocation - Vector3.right * size, spawnLocation + Vector3.right * size);
+    }
+
+    internal void SpawnPlayer(Player player)
+    {
+        if (!isSpawning)
+        {
+            transform.position = spawnLocation;
+            player.velocity = Vector3.zero;
+            isSpawning = true;
+            spawnStartTime = Time.time;
+        }
     }
 }

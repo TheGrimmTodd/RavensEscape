@@ -50,13 +50,18 @@ public class Player : MonoBehaviour {
         }
         else
         {
-            spawner.SpawnPlayer(this);
+            Spawn();
         }
 
         if (controller.collisions.above || controller.collisions.below)
         {
             velocity.y = 0;
         }
+    }
+
+    internal void Spawn()
+    {
+        spawner.SpawnPlayer(this);
     }
 
     public void SetDirectionalInput (Vector2 input)

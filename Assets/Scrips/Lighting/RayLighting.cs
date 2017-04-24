@@ -131,7 +131,7 @@ public class RayLighting : MonoBehaviour {
             if (playerHit && (!hit || hit.distance >= playerHit.distance))
             {
                 Spawn spawner = playerHit.collider.transform.GetComponent<Spawn>();
-                spawner.SpawnPlayer();
+                spawner.PlayerSeen();
             }
             if (hit.collider != null)
 			{
@@ -183,7 +183,6 @@ public class RayLighting : MonoBehaviour {
 			{
 				Debug.Log("\t " + m_Tris[i] + ", " + m_Tris[i+1] + ", " + m_Tris[i+2]);
 			}
-
 		}
 	}
 
@@ -194,11 +193,6 @@ public class RayLighting : MonoBehaviour {
 		{
 			rays[i].origin = transform.position;
 		}
-	}
-
-	void SetLightDirection(float angle)
-	{
-
 	}
 
 	void OnRotationChange(Quaternion rotationDif)
