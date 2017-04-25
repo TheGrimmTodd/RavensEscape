@@ -5,7 +5,7 @@ using UnityEngine;
 public class DeathZone : RaycastController {
 
     public Vector2 size = new Vector2(2.5f, 2.5f);
-    [Range(1,10)]
+    [Range(1, 10)]
     public float zoneWidth = 4;
     private float zoneHight = 4;
 
@@ -34,11 +34,6 @@ public class DeathZone : RaycastController {
     void OnDrawGizmos()
     {
         Gizmos.color = new Color(1, 0, 0, 0.5f);
-        Gizmos.DrawCube(transform.position, new Vector2(zoneWidth,zoneHight));
-    }
-
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        print(collision);
+        Gizmos.DrawCube(transform.position, new Vector2(zoneWidth, zoneHight));
     }
 }
