@@ -1,11 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+[RequireComponent(typeof(DragObjecController))]
 public class RayLighting : MonoBehaviour {
 
-	public DragObjecController dragController;
     public LayerMask playerMask;
-
     public float accuracy;
     [Range(0, 360)]
     public float Direction = 180;
@@ -21,6 +20,10 @@ public class RayLighting : MonoBehaviour {
     public float rotationRangeLeft = 225;
     public bool debugLogs;
     public bool debugLines;
+    public bool dragable;
+
+    [HideInInspector]
+    public DragObjecController dragController;
 
     private Vector3[] endpoints;
 	private Vector3[] m_Vertices;
@@ -44,6 +47,7 @@ public class RayLighting : MonoBehaviour {
 		tempPosition = transform.position;
 
 		mf = GetComponent<MeshFilter>();
+        dragController = GetComponent<DragObjecController>();
 	}
 
 	void initializeRayValues()
@@ -69,7 +73,10 @@ public class RayLighting : MonoBehaviour {
 	}
 	
 	void Update () {
-		dragController.Move ();
+        if (dragable)
+        {
+            dragController.Move();
+        }
 		if (tempAccuracy != accuracy || tempLightAngle != lightAngle) 
 		{
 			if(accuracy > 0 && lightAngle > 0)
@@ -79,7 +86,6 @@ public class RayLighting : MonoBehaviour {
 				initializeRayValues ();
 			}
 		}
-
 		if (tempPosition != transform.position)
 		{
 			OnPositionChange ();

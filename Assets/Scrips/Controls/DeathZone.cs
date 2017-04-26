@@ -1,39 +1,17 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DeathZone : RaycastController {
-
-    public Vector2 size = new Vector2(2.5f, 2.5f);
-    [Range(1, 10)]
-    public float zoneWidth = 4;
-    private float zoneHight = 4;
-
-    public override void Start()
+public class DeathZone : AbstractZone
+{
+    protected override Sides ZoneSides()
     {
-        transform.localScale = new Vector2(zoneWidth, zoneHight);
-        base.Start();
-        UpdateRaycastOrigins();
+        return new Sides(false, false, true, false);
     }
 
-    void Update () {
-        for (int i = 0; i < verticalRayCount; i++)
-        {
-            Vector2 rayOrigin = raycastOrigins.topLeft + Vector2.right * (verticalRaySpacing * i);
-            RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.up, 1, collisionMask);
-
-            Debug.DrawRay(rayOrigin, Vector2.up, Color.red);
-            if (hit && hit.distance == 0)
-            {
-                Spawn spawner = hit.collider.transform.GetComponent<Spawn>();
-                spawner.PlayerFallen();
-            }
-        }
-    }
-
-    void OnDrawGizmos()
+    protected override void OnEntered(Collider2D collider)
     {
-        Gizmos.color = new Color(1, 0, 0, 0.5f);
-        Gizmos.DrawCube(transform.position, new Vector2(zoneWidth, zoneHight));
+        collider.GetComponent<Spawn>().PlayerFallen();
     }
 }
