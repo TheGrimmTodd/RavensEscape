@@ -8,9 +8,11 @@ public abstract class AbstractZone : RaycastController
     [Range(1, 10)]
     public float zoneWidth = 4;
     private float zoneHight = 4;
+    private bool entered;
 
     public override void Start()
     {
+        entered = false;
         transform.localScale = new Vector2(zoneWidth, zoneHight);
         base.Start();
         UpdateRaycastOrigins();
@@ -68,9 +70,15 @@ public abstract class AbstractZone : RaycastController
     }
     private bool HandleHit(RaycastHit2D hit)
     {
-        if (hit && hit.distance == 0)
+        if (!entered && hit && hit.distance == 0)
         {
+            entered = true;
             OnEntered(hit.collider);
+            return true;
+            
+        }else if (hit && hit.distance != 0)
+        {
+            entered = false;
             return true;
         }
 
