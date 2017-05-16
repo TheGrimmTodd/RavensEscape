@@ -37,6 +37,7 @@ public class RayLighting : MonoBehaviour {
 	private MeshFilter mf;
 	private Ray[] rays;
 	Vector3 startDirection;
+    private bool isOn;
 
 	void Start () {
 		initializeRayValues ();
@@ -45,7 +46,7 @@ public class RayLighting : MonoBehaviour {
 		tempLightAngle = lightAngle;
 		tempUp = transform.up;
 		tempPosition = transform.position;
-
+        isOn = true;
 		mf = GetComponent<MeshFilter>();
         dragController = GetComponent<DragObjecController>();
 	}
@@ -77,23 +78,30 @@ public class RayLighting : MonoBehaviour {
         {
             dragController.Move();
         }
-		if (tempAccuracy != accuracy || tempLightAngle != lightAngle) 
-		{
-			if(accuracy > 0 && lightAngle > 0)
-			{
-				tempAccuracy = accuracy;
-				tempLightAngle = lightAngle;
-				initializeRayValues ();
-			}
-		}
-		if (tempPosition != transform.position)
-		{
-			OnPositionChange ();
-		}
-		UpdateRays();
-	}
+        if (isOn)
+        {
+            if (tempAccuracy != accuracy || tempLightAngle != lightAngle)
+            {
+                if (accuracy > 0 && lightAngle > 0)
+                {
+                    tempAccuracy = accuracy;
+                    tempLightAngle = lightAngle;
+                    initializeRayValues();
+                }
+            }
+            if (tempPosition != transform.position)
+            {
+                OnPositionChange();
+            }
+		    UpdateRays();
+        }
+        else
+        {
+            mf.mesh.Clear();
+        }
+    }
 
-	void FixedUpdate()
+    void FixedUpdate()
 	{
 		SwingLight ();
 		if (tempDirection != Direction) 
@@ -107,7 +115,6 @@ public class RayLighting : MonoBehaviour {
 	private void SwingLight()
 	{
 		if (rotationRangeRight != rotationRangeLeft && RotationSpeed != 0) {
-
 			if(RotationSpeed != 0)
 			{
 				Direction += RotationSpeed;
@@ -174,7 +181,12 @@ public class RayLighting : MonoBehaviour {
 		mf.mesh.triangles = m_Tris;
 	}
 
-	void PrintMeshInfo()
+    internal void TurnOn(bool switchState)
+    {
+        isOn = switchState;
+    }
+
+    void PrintMeshInfo()
 	{
 		if (debugLogs) 
 		{

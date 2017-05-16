@@ -5,6 +5,7 @@ using System;
 public class PlayerController : RaycastController
 {
     public CollisionInfo collisions;
+    public LayerMask actionableMask;
 
     [HideInInspector]
     public Vector2 playerInput;
@@ -61,12 +62,11 @@ public class PlayerController : RaycastController
             Vector2 rayOrigin = (directionX == -1) ? raycastOrigins.bottomLeft : raycastOrigins.bottomRight;
             rayOrigin += Vector2.up * (horizontalRaySpacing * i);
             RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.right * directionX, rayLength, collisionMask);
-
-            Debug.DrawRay(rayOrigin, Vector2.right * directionX , Color.red);
+            Debug.DrawRay(rayOrigin, Vector2.right * directionX, Color.red);
 
             if (hit)
             {
-                if(hit.distance == 0)
+                if (hit.distance == 0)
                 {
                     continue;
                 }
@@ -75,6 +75,45 @@ public class PlayerController : RaycastController
 
                 collisions.left = directionX == -1;
                 collisions.right = directionX == 1;
+            }
+        }
+    }
+
+    internal void CheckForActionable()
+    {
+
+        for (int i = 0; i < verticalRayCount; i++)
+        {
+            Vector2 rayOrigin = raycastOrigins.topLeft + Vector2.right * (verticalRaySpacing * i);
+            RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.down, collider.bounds.size.y - skinWidth * 2, actionableMask);
+            if (hit)
+            {
+                hit.transform.GetComponent<AbstractActionable>().DoAction();
+                return;
+            }
+            rayOrigin = raycastOrigins.bottomLeft + Vector2.right * (verticalRaySpacing * i);
+            hit = Physics2D.Raycast(rayOrigin, Vector2.up, collider.bounds.size.y - skinWidth * 2, actionableMask);
+            if (hit)
+            {
+                hit.transform.GetComponent<AbstractActionable>().DoAction();
+                return;
+            }
+        }
+        for (int i = 0; i < horizontalRayCount; i++)
+        {
+            Vector2 rayOrigin = raycastOrigins.bottomLeft + Vector2.up * (horizontalRaySpacing * i);
+            RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.right, collider.bounds.size.x - skinWidth * 2, actionableMask);
+            if (hit)
+            {
+                hit.transform.GetComponent<AbstractActionable>().DoAction();
+                return;
+            }
+            rayOrigin = raycastOrigins.bottomRight + Vector2.up * (horizontalRaySpacing * i);
+            hit = Physics2D.Raycast(rayOrigin, Vector2.left, collider.bounds.size.x - skinWidth * 2, actionableMask);
+            if (hit)
+            {
+                hit.transform.GetComponent<AbstractActionable>().DoAction();
+                return;
             }
         }
     }
@@ -89,7 +128,6 @@ public class PlayerController : RaycastController
             Vector2 rayOrigin = (directionY == -1) ? raycastOrigins.bottomLeft : raycastOrigins.topLeft;
             rayOrigin += Vector2.right * (verticalRaySpacing * i + moveAmount.x);
             RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.up * directionY, rayLength, collisionMask);
-
             Debug.DrawRay(rayOrigin, Vector2.up * directionY, Color.red);
 
             if (hit)
