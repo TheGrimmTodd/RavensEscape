@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -25,6 +26,7 @@ public class Player : MonoBehaviour {
     float minJumpVelocity;
     float velocityXSmothing;
     float timeToWallUnstick;
+
     Vector2 directionInput;
     bool wallSliding;
     float wallDirX;
@@ -68,7 +70,12 @@ public class Player : MonoBehaviour {
     {
         directionInput = input;
     }
-	
+
+    internal void ActionKeyDown()
+    {
+        controller.CheckForActionable();
+    }
+
     public void OnJumpInputDown()
     {
         if (wallSliding)
@@ -87,7 +94,6 @@ public class Player : MonoBehaviour {
             {
                 velocity.x = -wallDirX * wallJumpLeap.x;
                 velocity.y = wallJumpLeap.y;
-
             }
         }
         if (controller.collisions.below)

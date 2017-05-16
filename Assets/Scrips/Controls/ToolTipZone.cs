@@ -30,7 +30,6 @@ public class ToolTipZone : AbstractZone {
     private void showTip()
     {
         timesShowed++;
-        print(toolTip);
         levelText.SetLevelText(toolTip, LevelText.TextType.Short);
     }
 
