@@ -73,7 +73,7 @@ public class Spawn : MonoBehaviour {
         //TODO anything special for when Level is Finished.
         //move to UI screen &| next level
         //for now, just reset again.
-        levelText.SetLevelText("You've Excaped to the next Area!", LevelText.TextType.Long);
+        levelText.SetLevelText("You've escaped to the next Area!", LevelText.TextType.Long);
         ResetLevel();
     }
 }
