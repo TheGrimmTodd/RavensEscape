@@ -52,7 +52,7 @@ public class PlayerController : RaycastController
         float directionX = collisions.faceDir;
         float rayLength = Mathf.Abs(moveAmount.x) + skinWidth;
 
-        if(Mathf.Abs(moveAmount.x) < skinWidth)
+        if (Mathf.Abs(moveAmount.x) < skinWidth)
         {
             rayLength = 2 * skinWidth;
         }
@@ -81,7 +81,6 @@ public class PlayerController : RaycastController
 
     internal void CheckForActionable()
     {
-
         for (int i = 0; i < verticalRayCount; i++)
         {
             Vector2 rayOrigin = raycastOrigins.topLeft + Vector2.right * (verticalRaySpacing * i);
@@ -153,10 +152,5 @@ public class PlayerController : RaycastController
             above = below = false;
             left = right = false;
         }
-    }
-
-    public void SeenByLight()
-    {
-        transform.position = Vector3.zero + Vector3.forward * -10; 
     }
 }
