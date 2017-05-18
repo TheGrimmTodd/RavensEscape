@@ -37,7 +37,7 @@ public class RayLighting : MonoBehaviour {
 	private MeshFilter mf;
 	private Ray[] rays;
 	Vector3 startDirection;
-    private bool isOn;
+    private bool isOn = true;
 
 	void Start () {
 		initializeRayValues ();
@@ -46,7 +46,6 @@ public class RayLighting : MonoBehaviour {
 		tempLightAngle = lightAngle;
 		tempUp = transform.up;
 		tempPosition = transform.position;
-        isOn = true;
 		mf = GetComponent<MeshFilter>();
         dragController = GetComponent<DragObjecController>();
 	}
