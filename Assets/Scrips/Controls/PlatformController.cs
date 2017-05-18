@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,11 +7,18 @@ public class PlatformController : RaycastController {
 
     public Vector3 move;
     public Vector3[] localWayPoints;
-    public bool cyclic;
+    public CylceType cycleType;
     public float speed;
     public float waitTime;
     [Range(0,2)]
     public float easeAmount;
+    private bool paused = false;
+    private bool ranOnce = false;
+
+    internal void CanMove(bool switchState)
+    {
+        paused = !switchState;
+    }
 
     Vector3[] globalWayPoints;
 
@@ -23,7 +31,7 @@ public class PlatformController : RaycastController {
 
     public override void Start () {
         base.Start();
-
+        
         globalWayPoints = new Vector3[localWayPoints.Length];
         for (int i = 0; i < localWayPoints.Length; i++)
         {
@@ -51,7 +59,7 @@ public class PlatformController : RaycastController {
 
     Vector3 CalculatePlatformMovement()
     {
-        if(Time.time < nextMoveTime)
+        if(Time.time < nextMoveTime || paused || ranOnce)
         {
             return Vector3.zero;
         }
@@ -70,14 +78,18 @@ public class PlatformController : RaycastController {
         {
             percentAwayFrom = 0;
             fromWayPointIndex++;
-            if (!cyclic)
+            if (fromWayPointIndex >= globalWayPoints.Length - 1)
             {
-                if(fromWayPointIndex >= globalWayPoints.Length - 1)
+                if (cycleType == CylceType.Retrace)
                 {
                     fromWayPointIndex = 0;
                     System.Array.Reverse(globalWayPoints);
                 }
-            }
+                else if (cycleType == CylceType.OneOff)
+                {
+                    ranOnce = true;
+                }
+            }   
             nextMoveTime = Time.time + waitTime;
         }
         return newPos - transform.position;
@@ -210,5 +222,12 @@ public class PlatformController : RaycastController {
                 Gizmos.DrawLine(globalWayPointPos - Vector3.right * size, globalWayPointPos + Vector3.right * size);
             }
         }
+    }
+
+    public enum CylceType
+    {
+        Cyclic,
+        Retrace,
+        OneOff
     }
 }
